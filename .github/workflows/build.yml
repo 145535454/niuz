@@ -1,4 +1,4 @@
-name: Build JRMemory Framework
+name: Build Framework
 
 on:
   workflow_dispatch:
@@ -12,23 +12,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: 打包 JRMemory.framework
+      - name: 生成 JRMemory.framework
         run: |
           set -e
-          FRAMEWORK_NAME=JRMemory
-          FRAMEWORK_DIR=build/${FRAMEWORK_NAME}.framework
 
-          mkdir -p ${FRAMEWORK_DIR}/Headers
-          cp MemScan.h ${FRAMEWORK_DIR}/Headers/
-          cp Info.plist ${FRAMEWORK_DIR}/
-          cp JRMemory ${FRAMEWORK_DIR}/${FRAMEWORK_NAME}
+          FRAMEWORK=JRMemory.framework
+          BIN=JRMemory
+          HEADER=MemScan.h
 
-          ls -R ${FRAMEWORK_DIR}
+          mkdir -p build/${FRAMEWORK}/Headers
+          mkdir -p build/${FRAMEWORK}/Modules
 
+          cp ${BIN} build/${FRAMEWORK}/${BIN}
+          cp ${HEADER} build/${FRAMEWORK}/Headers/
+          cp Info.plist build/${FRAMEWORK}/
+
+          ls -R build/${FRAMEWORK}
+
+      - name: 打包 framework
+        run: |
           cd build
-          zip -r ${FRAMEWORK_NAME}.framework.zip ${FRAMEWORK_NAME}.framework
+          zip -r JRMemory.framework.zip JRMemory.framework
 
-      - name: 上传 JRMemory.framework
+      - name: 上传
         uses: actions/upload-artifact@v4
         with:
           name: JRMemory-framework
