@@ -1,4 +1,4 @@
-name: Build Framework
+name: Build JRMemory Framework
 
 on:
   workflow_dispatch:
@@ -10,31 +10,21 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: 生成 JRMemory.framework
+      - name: 打包 JRMemory.framework
         run: |
           set -e
+          ls -R .
 
-          FRAMEWORK=JRMemory.framework
-          BIN=JRMemory
-          HEADER=MemScan.h
+          mkdir -p build
+          cp -R JRMemory.framework build/
 
-          mkdir -p build/${FRAMEWORK}/Headers
-          mkdir -p build/${FRAMEWORK}/Modules
-
-          cp ${BIN} build/${FRAMEWORK}/${BIN}
-          cp ${HEADER} build/${FRAMEWORK}/Headers/
-          cp Info.plist build/${FRAMEWORK}/
-
-          ls -R build/${FRAMEWORK}
-
-      - name: 打包 framework
-        run: |
           cd build
           zip -r JRMemory.framework.zip JRMemory.framework
 
-      - name: 上传
+      - name: 上传 Framework
         uses: actions/upload-artifact@v4
         with:
           name: JRMemory-framework
